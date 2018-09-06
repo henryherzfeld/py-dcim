@@ -1,3 +1,15 @@
+def extract_config():
+  stream = open("conf.yaml", "r")
+  data = {
+      "stream.username": "stream.password"
+  }
+
+def create_connection(data):
+  mysql.open(user=data['user'])
+
+def migration():
+    exec(mysql ./dcm.sql)
+
 # Prints messages to stderr
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
