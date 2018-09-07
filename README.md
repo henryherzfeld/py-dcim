@@ -33,21 +33,21 @@ The configuration file for DCIM_fau uses markdown to notate specific parameters 
 ```YAML    
 # SNMP "secret"
   snmp:
-    - secret: 'mySNMPsecret'
+    - COMM_STRING: 'mySNMPsecre'
 
   chron:
 # collection interval (seconds)
-   - interval: 120
-   
+   - COLLECT_INTERVAL: 120
+
 # deletion interval (months)
-   - monthinterval: 4
- 
+   - DELETE_INTERVAL: 4
+
 # MYSQL connection info
-  mysql:
-    - server: 'localhost'
-    - usr: 'root'
-    - passwd: 'admin'
-    - db: 'myDatabase'
+  db:
+    - DB_HOST: 'localhost'
+    - DB_USER: 'root'
+    - DB_PASSWORD: 'admin'
+    - DB_NAME: 'deebee'
 ```
         
  &nbsp; &nbsp; You **must** include your _conf.yaml_ in your DCIM_fau root directory, with all parameters validated.

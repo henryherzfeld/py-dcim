@@ -1,2 +1,5 @@
 conf.yaml
 .idea
+*.pyc
+/dist/
+/*.egg-info
