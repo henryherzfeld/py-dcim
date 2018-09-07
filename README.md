@@ -31,16 +31,12 @@ The configuration file for DCIM_fau uses markdown to notate specific parameters 
  
  ##### &nbsp; &nbsp; _conf.yaml_ example
 ```YAML    
-# SNMP "secret"
   snmp:
-    - COMM_STRING: 'mySNMPsecre'
+    - COMM_STRING: 'mySNMPsecret'
 
   chron:
-# collection interval (seconds)
-   - COLLECT_INTERVAL: 120
-
-# deletion interval (months)
-   - DELETE_INTERVAL: 4
+   # collection interval (seconds)
+   - COLL_INTERVAL: 120
 
 # MYSQL connection info
   db:
@@ -59,25 +55,15 @@ DCIM_fau utilizes Python's `console_scripts` entry point logic to simplify deplo
 
 To initialize, run the following command:
 
-`$ dcim_fau:scaffold`
+`$ scaffold`
 
 This scaffolds the database, building the necessary structure for the provided equipment OIDs.
 
 ##### Run:
 To start collection, run the following command:
 
-`$ dcim_fau:run`
+`$ run`
 
-Roadmap*
--------
-
-| Release   | Target Date |
-| :--------- | -----:|
-| Alpha     | Sept. 20th |
-| Beta      | Oct. 15th    | 
-| 1.0       | November 10th |
-
-<sup>*The dates for all release windows are tentative</sup>
 
 The MIT License (MIT)
 =====================

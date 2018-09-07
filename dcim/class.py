@@ -2,7 +2,7 @@ from dcim.core import oid_walk, get_snmp_target
 
 
 # Class with regards to all UPS devices
-class Ups1:
+class ups:
     ip = ''
 
     def __init__(self, ip):
@@ -13,22 +13,12 @@ class Ups1:
         return oid_walk(upsOids, self.ip,  '')
 
 
-# Power Distribution Unit
-class Ups2:
-    ip = ''
-
-    def __init__(self, ip):
-        self.ip = ip
-
-    def get(self):
-        return oid_walk(ups2Oids, self.ip,  '')
-
-
-class RackPdu_a:
+class rpdu:
     ip = ''
     oids = []
+
     for x in range(0, len(rackPduOids)):
-        oids.append(["pdua_" + rackPduOids[x][0], rackPduOids[x][1], rackPduOids[x][2]])
+        oids.append(["pdu" +  + rackPduOids[x][0], rackPduOids[x][1], rackPduOids[x][2]])
 
     def __init__(self, ip):
         self.ip = ip
@@ -37,18 +27,14 @@ class RackPdu_a:
         return oid_walk(self.oids, self.ip,  '')
 
 
-class RackPdu_b:
-    ip = ''
-    oids = []
+rackPduOids = [
+    ("power", 'rPDUIdentDevicePowerWatts.0',1),
+    ("power_factor", 'rPDUIdentDevicePowerFactor.0',1000),
+    ("ltol_voltage", 'rPDUIdentDeviceLinetoLineVoltage.0',1)
+]
 
-    for x in range(0, len(rackPduOids)):
-        oids.append(["pdub_" + rackPduOids[x][0], rackPduOids[x][1], rackPduOids[x][2]])
-
-    def __init__(self, ip):
-        self.ip = ip
-
-    def get(self):
-        return oid_walk(self.oids, self.ip,  '')
+RackPdu_a('10.15.30.156'),
+RackPdu_b('10.15.30.157'),
 
 
 # OID is defined by initialization
