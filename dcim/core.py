@@ -15,8 +15,8 @@ def get_config(key):
         return conf[key]
 
 
-def get_snmp_target():
-    return 0
+def get_snmp_targets():
+
 
 
 # Prints messages to stderr
@@ -26,9 +26,12 @@ def eprint(*args, **kwargs):
 
 # Calls snmp_get and returns values
 def snmp_get(ip, oid, div):
+    # start session
     session = netsnmp.Session(DestHost=ip, Version=2, Community=comm)
     vars = netsnmp.VarList(netsnmp.Varbind(oid))
+
     v = session.get(vars)
+
     if str(v[0]) == '-1':
         eprint(get_date_time(), "OID not used on device", oid, "from IP", ip, sep=": ")
         sys.exit("OID not used on device")
@@ -40,7 +43,7 @@ def snmp_get(ip, oid, div):
                 ret = round((float(v[0])/div),1)
                 return str(ret)
         except:
-                if v[0] == None:
+                if v[0] is None:
                     return
                 else:
                     eprint(get_date_time(), "Unknown Error ", v[0], sep=": ")
@@ -100,27 +103,35 @@ def append_info(input_arr, tmp_arr):
             return input_arr
 
 
-# hmm
-def collect(rows):
-    rack_dic = {}
-    row_dic = {}
+# accepts dictionary of row objects
+# row objects contain dictionaries of rack objects
+# rack objects contain dictionaries of hardware class constructor calls, with ip, sensor params (note: first element is id string)
+# hardware class constructor code is then processed one by one inside rack dictionary
+# racks objects copied to rack_data dictionary
+# row objects copied to row_data dictionary
+# returns row_data dictionary
+def process_targets(snmp_targets):
+    rack_data = {}
+    row_data = {}
 
-    for row_name, row_val in rows.items():
+    # grab first item (row) in snmp_target dictionary
+    for row_id, row_profile in snmp_targets.items():
 
-        # For each rack
-        for rack_name, rack_val in row_val.items():
+        # for each rack
+        for rack_name, rack_profile in row_equipment.items():
 
             # returns readings dictionary where dic[n] =
             # { rack_n_id : { rack_n_reading1_name : rack_n_reading1_val,
             #                 rack_n_reading2_name : ... }
-            rack_dic[rack_name] = process_rack(rack_val)
+            rack_data[rack_name] = process_rack(rack_profile)
 
-        row_dic[row_name] = [
-            rack_val[0],
-            copy.deepcopy(rack_dic)
+        row_data[row_id] = [
+            rack_profile[0],
+            copy.deepcopy(rack_data)
         ]
-        rack_dic.clear()
+        rack_data.clear()
 
-    transaction.store_data(row_dic)
+    return row_data
+
 
 

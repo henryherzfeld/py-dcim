@@ -3,6 +3,10 @@ from mysql.connector import errorcode
 from dcim.core import eprint, get_config, get_date_time
 
 
+class TransactionHandler:
+    y = 10
+
+
 # accepts db config object, connects using it
 def create_connection():
 
@@ -73,6 +77,6 @@ def store_row(row, row_id):
 
 
 # accepts a rows 'dictionary' object, stores them
-def store_data(rows):
+def store_snmp_data(rows):
     for row in rows:
         store_row(row)
