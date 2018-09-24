@@ -1,26 +1,21 @@
 from dcim import core, transaction
 from time import time
-import asyncio
 
 
 def main():
 
-    # grabbing chron config from yaml in package root
+    # collecting all data necessary for process loop
     config_chron = core.get_config('chron')
-
-    # build snmp target dictionary from equipment profiles
     snmp_targets = core.get_snmp_targets()
-
-    # create
+    snmp_target_data = {}
+    start = time()
 
     while True:
-        start = time()
+        interval_start = time()
 
-        # collecting data from snmp target dictionary
-        io = core.process_targets(snmp_targets)
+        for snmp_target in snmp_targets:
+            snmp_target_data[snmp_target.name] = core.process_snmp_target(snmp_target)
 
-        # storing snmp data dictionary
-        transaction.store_snmp_data(snmp_data)
+        transaction.store_snmp_target_data(snmp_target_data)
 
-        # waiting for specified collection interval value
-        core.wait(start, config_chron['COLLECT_INTERVAL'])
+        core.wait(interval_start, config_chron['COLLECT_INTERVAL'])

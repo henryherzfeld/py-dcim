@@ -1,14 +1,16 @@
-import dcim
 import json
-from dcim import core, transaction
+from dcim.transaction import create_connection
+from dcim.core import get_config
 # all command line entry points as specified in setup.py are called here
 
 
-# command for opening database connections from profile.JSON
+# command for opening database connections from config
 def scaffold():
-    transaction.create_connection()
 
-    json.load()
+    create_connection()
+
+    get_config('')
+
 
 # command for starting snmp processing
 def run():

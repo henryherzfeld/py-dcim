@@ -1,85 +1,77 @@
-from dcim.core import oid_walk, get_snmp_targets
-
-# checks container's type and pulls relevant
-def get_contents(container):
+from dcim.core import get_config
 
 
-    if container.type == 'row':
+#
+def build_oid(equipment):
 
-        return data
+    for x in range(0, len(equipment.oid_array)):
+        equipment.oid_array.append([
+                                    equipment.oid_array[x][0],
+                                    equipment.oid_array[x][1]
+                                   ])
+        return equipment
 
 
-class Row:
-    type = 'row'
+#
+def build_equipment_snmp_data(equipment):
+
+    if equipment.equipment_type is not None:
+
+        equipment.oid_array = build_oid(
+            get_config('oids')[equipment.equipment_type]
+        )
+
+        if equipment.sensor_id is not None:
+            equipment.oid_array.append(equipment.sensor_id)
+
+        return equipment
+
+    else:
+        return
+
+
+#
+class Rack:
     contains = []
+    id = 0
+    row = 0
 
-    def __init__(self, contains, type):
-        self.type = 'row'
-        self.contains = get_contents(self)
+    def __init__(self, id, rack_equipment, row):
+        self.id = id
+        self.row = row
+
+        # - racks:
+        #       - 1:
+        #         row: a
+        #         equipment:
+        #             - ups:
+        #                   ip: 10.15.30.184
+
+        # model after above yaml format
+
+        #  {
+        #   1: {
+        #        row: a,
+        #        equipment: {
+        #            ups: {
+        # `              ip: 10.15.30.184
+        #                }
+        #            }
+        #        }
+        #   2: {
+        #        ...
+        # }
+
+        for equipment in range(0, len(rack_equipment)):
+            configured_equipment = build_equipment_snmp_data(equipment)
+            self.contains.append(configured_equipment)
 
 
-
-class AC:
-class UPS:
+#
+class Equipment:
+    equipment_type = ''
     ip = ''
+    sensor_id = ''
+    oid_array = []
 
-    def __init__(self, ip):
-        self.ip = ip
-
-    # Go through each OID and return the respective value
-    def get(self):
-        return oid_walk(upsOids, self.ip,  '')
-
-class Sensor:
-    class TempSensor:
-        ip = ''
-        sensor = ''
-
-        def __init__(self, sensor, ip):
-            self.sensor = sensor
-            self.ip = ip
-
-        def get(self):
-            return oid_walk(tempSensorOids, self.ip, self.sensor)
-
-
-
-class RackPDU:
-    ip = ''
-    oids = []
-
-    for x in range(0, len(rackPduOids)):
-        oids.append(["pdu" +  + rackPduOids[x][0], rackPduOids[x][1], rackPduOids[x][2]])
-
-    def __init__(self, ip):
-        self.ip = ip
-
-    def get(self):
-        return oid_walk(self.oids, self.ip,  '')
-
-
-
-class ACRackTemp:
-    # [name, oid, divisor]            
-    oids = []
-    ip = ''
-
-    def __init__(self, ip, rid):
-        self.ip = ip
-        rid = int(rid)
-
-        if rid > int(3) or rid < int(1):
-            sys.exit("rid not equal to 1, 2, or 3")
-
-        tmp = 'airIRRP100UnitStatusRackInletTemperature' + str(rid) + 'Metric.0'
-        tmp2 = "temp2"
-        self.oids = [(tmp2, tmp, 10)]
-
-    def get(self):
-        return oid_walk(self.oids, self.ip,  '')
-
-
-
-
-
-
+    def __init__(self, type):
