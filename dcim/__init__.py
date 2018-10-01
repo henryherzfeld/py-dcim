@@ -1,21 +1,32 @@
-from dcim import core, transaction
+from dcim.core import get_snmp_targets
+from dcim.configuration import get_config
+from dcim.engine import Engine
 from time import time
+from collections import defaultdict
 
 
 def main():
+    print("starting..")
 
     # collecting all data necessary for process loop
-    config_chron = core.get_config('chron')
-    snmp_targets = core.get_snmp_targets()
-    snmp_target_data = {}
+    config_chron = get_config('chron')
+
+    print('acquiring target table...')
+    snmp_targets = get_snmp_targets()
+
+    snmp_target_data = defaultdict(lambda: 0)
     start = time()
+
+    # initializing snmp engine with target data
+    engine = Engine(snmp_targets)
 
     while True:
         interval_start = time()
 
-        for snmp_target in snmp_targets:
-            snmp_target_data[snmp_target.name] = core.process_snmp_target(snmp_target)
+        engine.enqueue_requests()
 
-        transaction.store_snmp_target_data(snmp_target_data)
+        snmp_target_data = engine.process_requests()
 
-        core.wait(interval_start, config_chron['COLLECT_INTERVAL'])
+        # store_snmp_target_data(snmp_target_data)
+
+        core.wait(interval_start, config_chron['COLL_INTERVAL'])

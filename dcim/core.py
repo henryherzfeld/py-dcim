@@ -1,34 +1,33 @@
-import copy
-from time import time
-from time import sleep
-from yaml import load
-from dcim import engine
-
-
-# accepts a key string, if object matches key, returns it
-def get_config(key):
-    conf = load(open("conf.yaml"))
-    if conf[key]:
-        return conf[key]
+from time import time, sleep
+from dcim.classes import Rack
+from dcim.configuration import get_config
 
 
 # this is where we build an array of all targets
 def get_snmp_targets():
-    snmp_targets[] = equipment.json
-    return snmp_targets[]
+    snmp_targets = []
+    id = 0
 
+    snmp_targets_blob = get_config('targets')
 
-#
-def process_snmp_target(snmp_target):
-    snmp_target_data = []
+    # getting individual equipment profile, row from configuration file
+    for snmp_target_label, snmp_target in snmp_targets_blob.items():
 
-    for equipment in snmp_target.contains:
-        snmp_target_data.append((engine.async_process_equipment(equipment)))
+        id += 1
+        equipment = snmp_target['equipment']
+        row = snmp_target['row']
 
-    return snmp_target_data
+        if equipment is None:
+            print('Rack ' + id + 'has no equipment in configuration file')
+
+        print('rack ' + row + str(id) + ' initialized')
+        snmp_targets.append(Rack(id, equipment, row))
+
+    return snmp_targets
 
 
 # wait for specified (conf.yaml) interval value
 def wait(start, interval):
+    print('waiting {0} seconds'.format(interval))
     while time() - start < interval:
         sleep(.1)
