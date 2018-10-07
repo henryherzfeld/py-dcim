@@ -25,7 +25,9 @@ def main():
 
         engine.enqueue_requests()
 
-        snmp_target_data = engine.process_requests()
+        results = engine.process_requests()
+
+        print(results)
 
         # store_snmp_target_data(snmp_target_data)
 

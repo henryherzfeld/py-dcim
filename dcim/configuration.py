@@ -6,6 +6,7 @@ from collections import defaultdict
 def get_config(key):
     try:
         conf = load(open("conf.yaml"))[key]
+
     except KeyError as err:
         print("Key error: {0}".format(err))
 
