@@ -1,6 +1,7 @@
 from dcim.core import get_snmp_targets
 from dcim.configuration import get_config
-from dcim.engine import Engine
+from dcim.snmp import SNMPEngine
+from dcim.stream import StreamEngine
 from time import time
 from collections import defaultdict
 
@@ -17,8 +18,9 @@ def main():
     snmp_target_data = defaultdict(lambda: 0)
     start = time()
 
-    # initializing snmp engine with target data
-    engine = Engine(snmp_targets)
+    # initializing engines
+    engine = SNMPEngine(snmp_targets)
+    stream_engine = StreamEngine()
 
     while True:
         interval_start = time()
@@ -27,8 +29,6 @@ def main():
 
         results = engine.process_requests()
 
-        print(results)
-
-        # store_snmp_target_data(snmp_target_data)
+        stream_engine.add(results)
 
         core.wait(interval_start, config_chron['COLL_INTERVAL'])

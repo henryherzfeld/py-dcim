@@ -7,7 +7,6 @@ from pysnmp.hlapi.asyncio import (
     ContextData,
     ObjectIdentity,
     ObjectType,
-    isEndOfMib,
 )
 from pysnmp.smi import view
 import asyncio
@@ -20,7 +19,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 # Adaption of PySNMP Engine, performs all SNMP processing asynchronously
-class Engine:
+class SNMPEngine:
     requests = []
     targets = []
     results = []
@@ -38,9 +37,8 @@ class Engine:
         self.community_string = get_config('snmp')['COMM_STRING']
         self.timeout = get_config('snmp')['TIMEOUT']
         self.snmpEngine = SnmpEngine()
-        self.loop = asyncio.get_event_loop()
-        self.queue = asyncio.Queue()
         self.mibViewController = view.MibViewController(self.snmpEngine.getMibBuilder())
+        self.loop = asyncio.get_event_loop()
 
         #self.test()
 
@@ -104,21 +102,9 @@ class Engine:
 
     def process_requests(self):
         print('processing request queue')
-        results = list
 
-        results.append([self.loop.run_until_complete(self.process_request(request)) for request in self.requests])
-        
-        return results
-
-    async def process_request(self, task):
-
-        result = await asyncio.wait_for(
-                        asyncio.shield(task),
-                        self.timeout,
-                        loop=self.loop,
-        )
-
-        return result
+        for request in self.requests:
+            self.loop.run_until_complete(request)
 
     def test(self):
         # test parameters for live SNMP targets
