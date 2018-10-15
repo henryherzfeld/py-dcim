@@ -46,9 +46,8 @@ class Rack:
         equipment_snmp_data = defaultdict(lambda: 0)
 
         for equipment in self.contains:
-            for oid in equipment.oid_array:
-                entry = {equipment.ip: oid}
-                equipment_snmp_data.update(entry)
+            entry = {equipment.ip: equipment.oid_array}
+            equipment_snmp_data.update(entry)
 
         return equipment_snmp_data
 

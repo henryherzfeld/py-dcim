@@ -7,6 +7,7 @@ from pysnmp.hlapi.asyncio import (
     ContextData,
     ObjectIdentity,
     ObjectType,
+    Integer32,
 )
 from pysnmp.smi import view
 import asyncio
@@ -43,14 +44,10 @@ class SNMPEngine:
         #self.test()
 
     # asynchronous SNMP walk, steps through each OID at host parameter address
-    async def next_snmp_request(self, host, *oids):
+    async def next_snmp_request(self, host, var_binds):
 
         print("attempting SNMP for " + host)
-
-        for oid in oids:
-            var_bind = ObjectType(ObjectIdentity('POWERNET-MIB', oid).addAsn1MibSource('http://mibs.snmplabs.com/asn1/@mib@'))
-
-            var_bind.resolveWithMib(self.mibViewController)
+        for var_bind in var_binds:
 
             while True:
                 response = await nextCmd(
@@ -80,6 +77,7 @@ class SNMPEngine:
 
                     print(varbind_table)
 
+
     # retrieves snmp data from each target's equipment, builds and sorts dictionary of lists
     # where key is ip and value is array of all oids, stores request calls for each ip in event loop
     def enqueue_requests(self):
@@ -93,12 +91,23 @@ class SNMPEngine:
             for ip in request_data:
                 request_data_sorted[ip] = (request_data[ip])
 
-        for ip, oid_array in request_data_sorted.items():
+        for ip, oids in request_data_sorted.items():
+            objects = self.initialize_objects(oids)
+
             self.requests.append(
                 self.loop.create_task(
-                    self.next_snmp_request(ip, *oid_array)
+                    self.next_snmp_request(ip, objects)
                 )
             )
+
+    def initialize_objects(self, oids):
+        var_binds = []
+
+        for oid in oids:
+            var_bind = ObjectType(ObjectIdentity('POWERNET-MIB', str(oid[0])))
+
+            var_binds.append(var_bind)
+        return var_binds
 
     def process_requests(self):
         print('processing request queue')
