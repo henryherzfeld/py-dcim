@@ -14,6 +14,7 @@ def get_config(key):
         conf_data = defaultdict(list)
 
         for item in conf:
-            conf_data[item] = conf[item]
+            if conf[item]:
+                conf_data[item] = conf[item]
 
         return conf_data
