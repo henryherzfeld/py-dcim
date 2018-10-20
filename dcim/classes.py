@@ -30,7 +30,6 @@ class Rack:
                 )
             )
 
-
     # builds a dictionary of lists where key is ip and value is list of each equipment's oid array
     def get_equipment_snmp_data(self):
         equipment_snmp_data = defaultdict(lambda: 0)
@@ -57,7 +56,8 @@ class Equipment:
         self.oid_array = oid_obj_array
         self.rack = rack
         self.row = row
-        sensor_id = ''
+        self.snmp_requests = build.snmp_requests(self.oid_array)
+        self.sensor_id = ''
 
 
 class Oid:

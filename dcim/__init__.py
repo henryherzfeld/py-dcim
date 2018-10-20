@@ -1,9 +1,10 @@
-import dcim.core
+from pkgutil import extend_path
+__path__ = extend_path(__path__, __name__)
+import dcim.time
 from dcim.configuration import get_config
 from dcim.snmp import SNMPEngine
 from dcim.stream import StreamEngine
 from time import time
-from collections import defaultdict
 import dcim.builder as build
 
 
@@ -30,8 +31,6 @@ def main():
 
         stream_engine.add(results)
 
-        core.wait(interval_start, config_chron['COLL_INTERVAL'])
+        time.wait(interval_start, config_chron['COLL_INTERVAL'])
 
 
-from pkgutil import extend_path
-__path__ = extend_path(__path__, __name__)

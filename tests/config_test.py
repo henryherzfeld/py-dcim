@@ -5,7 +5,6 @@ import dcim.configuration as conf
 from collections import defaultdict
 
 
-
 def test_config_targets():
     config = conf.get_config('targets')
 

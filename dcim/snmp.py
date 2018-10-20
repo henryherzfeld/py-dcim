@@ -1,4 +1,3 @@
-from pysnmp.error import PySnmpError
 from pysnmp.hlapi.asyncio import (
     getCmd,
     CommunityData,
@@ -12,9 +11,7 @@ from pysnmp.hlapi.asyncio import (
 from pysnmp.smi import view
 import asyncio
 import logging
-from collections import defaultdict
 from dcim.configuration import get_config
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,9 +39,7 @@ class SNMPEngine:
         self.mibViewController = view.MibViewController(self.mibBuilder)
         self.loop = asyncio.get_event_loop()
 
-        self.mibBuilder.setMibSources('C:/mbia')
-
-
+    # process a single SNMP request asynchronously, requires host and snmp_object
     async def get_snmp_request(self, host, target):
 
         print("attempting SNMP for " + host)
@@ -57,7 +52,7 @@ class SNMPEngine:
             target,
         )
 
-        error_indication, error_status, error_index, varbind_table = response
+        error_indication, error_status, error_index = response
 
         if error_indication:
             LOGGER.warning('%s with this asset: %s', error_indication, host)
@@ -67,38 +62,23 @@ class SNMPEngine:
             LOGGER.warning(
                 '%s at %s',
                 error_status.prettyPrint(),
-                error_index and varbind_table[-1][int(error_index) - 1] or '?'
             )
             return
-
-        else:
-            var_binds = varbind_table[-1]
-
-            print(varbind_table)
 
     # retrieves snmp data from each target's equipment, builds and sorts dictionary of lists
     # where key is ip and value is array of all oids, stores request calls for each ip in event loop
     def enqueue_requests(self):
         print('enqueueing requests')
 
-        request_data_sorted = defaultdict(lambda: 0)
-
         for target in self.targets:
-            request_data = target.get_equipment_snmp_data()
+            for equipment in target.contains:
+                for snmp_request in equipment.snmp_requests:
 
-            for ip in request_data:
-                request_data_sorted[ip] = (request_data[ip])
-
-        for ip, oids in request_data_sorted.items():
-            objects = self.initialize_objects(oids)
-
-            self.requests.append(
-                self.loop.create_task(
-                    self.get_snmp_request(ip, objects)
-                )
-            )
-
-
+                    self.requests.append(
+                        self.loop.create_task(
+                            self.get_snmp_request(equipment.ip, snmp_request)
+                        )
+                    )
 
     def process_requests(self):
         print('processing request queue')
@@ -107,6 +87,8 @@ class SNMPEngine:
             self.loop.run_until_complete(request)
 
     def test(self):
+        import dcim.builder as build
+
         # test parameters for live SNMP targets
         hostname = 'demo.snmplabs.com'
         oids = [
@@ -115,7 +97,7 @@ class SNMPEngine:
 
         print('performing test for: {0} oids at '.format(len(oids)) + hostname)
 
-        objects = self.initialize_objects(oids)
+        objects = build.snmp_requests(oids)
 
         tasks = [
             self.loop.create_task(

@@ -7,10 +7,10 @@ from dcim.classes import (
      Equipment,
      Rack
 )
-from dcim.configuration import get_config
 
 
-# accepts config target data, returns array of built
+# accepts config target data, returns array of Rack objects
+# on init, ea rack object initializes their containing equipment
 def racks(targets_blob):
     snmp_targets = []
     id = 0
@@ -31,35 +31,32 @@ def racks(targets_blob):
     return snmp_targets
 
 
+# accepts config oid data relative to equipment type.
+# returns array of Oid objects containing value and divisor
 def oids(oid_array):
     oid_obj_array = []
 
     for oid_entry in oid_array:
 
-        # handling layered dictionary and lists
+        # handling layered dictionary and lists from config YAML
         oid_entry = oid_entry.popitem()[1]
 
         value = oid_entry['value']
         divisor = oid_entry['divisor']
 
         oid_obj = Oid(value, divisor)
-        print(oid_obj.get_oid())
+
         oid_obj_array.append(oid_obj)
 
     return oid_obj_array
 
 
-# accepts an array of oid objects and
-def snmp_objects(self, oids):
-    var_binds = []
-    #
-    # for oid in oids:
-    #     var_bind = ObjectType(ObjectIdentity('POWERNET-MIB', str(oid[0]), 0), 1)
-    #
-    #     var_binds.append(var_bind)
-    # return var_binds
+# accepts an array of Oid objects and returns an array of SNMP objects (prepped for SNMPEngine)
+# TODO: incorporate different MIBs (ie. APCPower-MIB) based upon equipment class
+def snmp_requests(oids):
+    snmp_obj_array = []
 
     for oid in oids:
-        var_binds.append(ObjectType(ObjectIdentity('PowerNet-MIB', oid, '0')).loadMibs('C:/mibs'))
+        snmp_obj_array.append(ObjectType(ObjectIdentity('PowerNet-MIB', oid, '0')).loadMibs('C:/mibs'))
 
-    return var_binds
+    return snmp_obj_array
