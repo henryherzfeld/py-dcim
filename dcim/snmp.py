@@ -1,4 +1,5 @@
 from pysnmp.hlapi.asyncio import (
+    bulkCmd,
     getCmd,
     CommunityData,
     UdpTransportTarget,
@@ -52,7 +53,7 @@ class SNMPEngine:
             target,
         )
 
-        error_indication, error_status, error_index = response
+        error_indication, error_status, error_index, varbinds = response
 
         if error_indication:
             LOGGER.warning('%s with this asset: %s', error_indication, host)
@@ -85,31 +86,3 @@ class SNMPEngine:
 
         for request in self.requests:
             self.loop.run_until_complete(request)
-
-    def test(self):
-        import dcim.builder as build
-
-        # test parameters for live SNMP targets
-        hostname = 'demo.snmplabs.com'
-        oids = [
-            'airIRRP100UnitStatusRackInletTempMetric',
-        ]
-
-        print('performing test for: {0} oids at '.format(len(oids)) + hostname)
-
-        objects = build.snmp_requests(oids)
-
-        tasks = [
-            self.loop.create_task(
-                self.get_snmp_request(hostname, objects[0])
-            )
-        ]
-
-        result = self.loop.run_until_complete(
-            asyncio.wait(
-                tasks,
-                loop=self.loop,
-            )
-        )
-
-        return result

@@ -9,6 +9,7 @@ from dcim.classes import (
 )
 
 
+
 # accepts config target data, returns array of Rack objects
 # on init, ea rack object initializes their containing equipment
 def racks(targets_blob):
@@ -57,6 +58,8 @@ def snmp_requests(oids):
     snmp_obj_array = []
 
     for oid in oids:
-        snmp_obj_array.append(ObjectType(ObjectIdentity('PowerNet-MIB', oid, '0')).loadMibs('C:/mibs'))
+        snmp_obj = ObjectType(ObjectIdentity(oid.get_oid()))
+        snmp_obj_array.append(snmp_obj)
+
 
     return snmp_obj_array

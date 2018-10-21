@@ -17,4 +17,4 @@ def test_config_oids():
     assert type(config) is defaultdict
 
     for equipment in config.items():
-        assert type(equipment) is list
+        assert type(equipment) is tuple

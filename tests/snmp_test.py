@@ -37,10 +37,3 @@ def test_snmp_enqueue():
     engine.enqueue_requests()
 
     assert engine.requests
-
-
-def test_snmp_single():
-    engine = snmp.SNMPEngine(build.racks(conf.get_config('targets')))
-    result = engine.test()
-
-    assert 'something' in result

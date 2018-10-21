@@ -1,6 +1,6 @@
 from pkgutil import extend_path
 __path__ = extend_path(__path__, __name__)
-import dcim.time
+from dcim.time import wait
 from dcim.configuration import get_config
 from dcim.snmp import SNMPEngine
 from dcim.stream import StreamEngine
@@ -31,6 +31,6 @@ def main():
 
         stream_engine.add(results)
 
-        time.wait(interval_start, config_chron['COLL_INTERVAL'])
+        wait(interval_start, config_chron['COLL_INTERVAL'])
 
 
