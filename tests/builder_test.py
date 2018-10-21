@@ -3,7 +3,7 @@ myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
 import dcim.builder as build
 import dcim.configuration as config
-from dcim.classes import (
+from dcim.builder import (
      Oid,
      Equipment,
      Rack
