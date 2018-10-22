@@ -18,6 +18,4 @@ class StreamEngine:
 
     def add(self, data):
         if data:
-            for payload in data:
-                send_data = (' = '.join([x for x in payload]))
-            self.stream.add(send_data)
+            self.stream.add(data)
