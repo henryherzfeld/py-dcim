@@ -88,16 +88,6 @@ class Rack:
                 )
             )
 
-    # builds a dictionary of lists where key is ip and value is list of each equipment's oid array
-    def get_equipment_snmp_data(self):
-        equipment_snmp_data = defaultdict(lambda: 0)
-
-        for equipment in self.contains:
-            entry = {equipment.ip: equipment.oid_array}
-            equipment_snmp_data.update(entry)
-
-        return equipment_snmp_data
-
 
 # constructor assigns equipment type, ip, oids, rowm rack and (optionally) sensorid
 class Equipment:
@@ -116,6 +106,10 @@ class Equipment:
         self.row = row
         self.snmp_requests = snmp_requests(self.oid_array)
         self.sensor_id = ''
+
+    def get_label(self):
+        label = str(self.row) + str(self.rack) + str(self.equipment_type)
+        return label
 
 
 class Oid:

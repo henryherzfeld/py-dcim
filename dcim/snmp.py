@@ -66,6 +66,9 @@ class SNMPEngine:
             )
             return
 
+        else:
+            return varbinds
+
     # retrieves snmp data from each target's equipment, builds and sorts dictionary of lists
     # where key is ip and value is array of all oids, stores request calls for each ip in event loop
     def enqueue_requests(self):
@@ -75,14 +78,20 @@ class SNMPEngine:
             for equipment in target.contains:
                 for snmp_request in equipment.snmp_requests:
 
-                    self.requests.append(
+                    # creating redis-ready key:value as label:request to be returned as label:reponse post-snmp
+                    self.requests.append({
+                        equipment.get_label():
+
                         self.loop.create_task(
                             self.get_snmp_request(equipment.ip, snmp_request)
                         )
-                    )
+                    })
 
     def process_requests(self):
         print('processing request queue')
 
         for request in self.requests:
-            self.loop.run_until_complete(request)
+            for label, request_data in request.items():
+                response = self.loop.run_until_complete(request_data)
+                print({label: response})
+                return {label: response}
