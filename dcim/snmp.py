@@ -89,12 +89,9 @@ class SNMPEngine:
 
     def process_requests(self):
         print('processing request queue')
-        send_data = []
 
         for request in self.requests:
             for label, request_data in request.items():
                 response = self.loop.run_until_complete(request_data)
-                for data in response.popitem():
-                    send_data.append[data]
-                    print({label: send_data})
-                    return {label: send_data}
+                print({label: response})
+                return {label: response}
