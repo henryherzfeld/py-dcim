@@ -67,7 +67,7 @@ class SNMPEngine:
             return
 
         else:
-            return varbinds
+            return varbinds.items()
 
     # retrieves snmp data from each target's equipment, builds and sorts dictionary of lists
     # where key is ip and value is array of all oids, stores request calls for each ip in event loop
