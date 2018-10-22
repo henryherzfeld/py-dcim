@@ -19,5 +19,5 @@ class StreamEngine:
     def add(self, data):
         if data:
             for payload in data:
-                send_data = (' = '.join([x.prettyPrint() for x in payload]))
+                send_data = (' = '.join([x for x in payload]))
             self.stream.add(send_data)
