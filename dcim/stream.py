@@ -14,7 +14,7 @@ class StreamEngine:
             port=6379,
             db=0
         )
-        self.stream = db.Stream('stream')
+        self.stream = db.Stream('stream1')
 
     def add(self, data):
         if data:
