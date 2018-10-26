@@ -16,6 +16,7 @@ class StreamEngine:
         )
         self.stream = db.Stream('stream1')
 
-    def add(self, data):
-        if data:
-            self.stream.add(data)
+    def add(self, data_dict):
+        for data in data_dict:
+            if data:
+                self.stream.add(data)

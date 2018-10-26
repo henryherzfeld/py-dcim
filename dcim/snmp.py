@@ -1,18 +1,16 @@
 from pysnmp.hlapi.asyncio import (
-    bulkCmd,
     getCmd,
     CommunityData,
     UdpTransportTarget,
     SnmpEngine,
     ContextData,
-    ObjectIdentity,
-    ObjectType,
 
 )
 from pysnmp.smi import view
 import asyncio
 import logging
 from dcim.configuration import get_config
+from collections import defaultdict
 
 LOGGER = logging.getLogger(__name__)
 
@@ -41,7 +39,7 @@ class SNMPEngine:
         self.loop = asyncio.get_event_loop()
 
     # process a single SNMP request asynchronously, requires host and snmp_object
-    async def get_snmp_request(self, host, target):
+    async def send_snmp_request(self, host, target):
 
         print("attempting SNMP for " + host)
 
@@ -76,22 +74,27 @@ class SNMPEngine:
 
         for target in self.targets:
             for equipment in target.contains:
-                for snmp_request in equipment.snmp_requests:
+                for oid_obj in equipment.oid_array:
 
-                    # creating redis-ready key:value as label:request to be returned as label:reponse post-snmp
+                    # appending parent equipment data label to oid metadata array for later organization
+                    metadata_dict = oid_obj.get_metadata_dict()
+                    metadata_dict['metadata'].update({'label': equipment.get_label()})
+
                     self.requests.append({
-                        equipment.get_label():
-
                         self.loop.create_task(
-                            self.get_snmp_request(equipment.ip, snmp_request)
-                        )
+                            self.send_snmp_request(equipment.ip, oid_obj.get_snmp_object())
+                        ):
+                            metadata_dict
                     })
 
     def process_requests(self):
         print('processing request queue')
+        response_data = defaultdict(lambda: 0)
 
         for request in self.requests:
-            for label, request_data in request.items():
-                response = self.loop.run_until_complete(request_data)
-                print({label: response})
-                return {label: response}
+            for snmp_request, metadata in request.items():
+                response = self.loop.run_until_complete(snmp_request)
+                response_data.update({response: metadata})
+
+        print (response_data)
+        return response_data
