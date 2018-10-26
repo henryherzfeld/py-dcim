@@ -67,7 +67,6 @@ class SNMPEngine:
         else:
             return varbinds[0]
 
-
     # retrieves snmp data from each target's equipment, builds and sorts dictionary of lists
     # where key is ip and value is array of all oids, stores request calls for each ip in event loop
     def enqueue_requests(self):
@@ -97,5 +96,4 @@ class SNMPEngine:
                 response = self.loop.run_until_complete(snmp_request)
                 response_data.update({response: metadata})
 
-        print (response_data)
         return response_data
