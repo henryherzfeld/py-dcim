@@ -17,6 +17,9 @@ class StreamEngine:
         self.stream = db.Stream('stream1')
 
     def add(self, data):
-        for request_data, metadata in data:
-            if request_data:
-                self.stream.add({request_data: metadata})
+        for item in data:
+            if item:
+                for oid, payload in data:
+                    self.stream.add({payload: data})
+
+        data.clear()
