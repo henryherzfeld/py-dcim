@@ -96,4 +96,5 @@ class SNMPEngine:
                 response = self.loop.run_until_complete(snmp_request)
                 response_data.update({response: metadata})
 
+        self.requests.clear()
         return response_data
