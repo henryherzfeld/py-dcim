@@ -31,6 +31,8 @@ def main():
 
         stream_engine.add(results)
 
+        results.clear()
+
         wait(interval_start, config_chron['COLL_INTERVAL'])
 
 
