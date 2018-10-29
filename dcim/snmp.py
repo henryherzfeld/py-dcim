@@ -96,7 +96,7 @@ class SNMPEngine:
             for snmp_request, metadata in request.items():
                 response = self.loop.run_until_complete(snmp_request)
                 if response:
-                    print(response)
+                    print(type(response))
                     response_data.update({response: metadata})
 
                 else:
