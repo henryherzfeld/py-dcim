@@ -89,7 +89,7 @@ class SNMPEngine:
 
     def process_requests(self):
         print('processing request queue')
-        response_data = defaultdict(lambda: 0)
+        response_data = {}
         failures = 0
 
         for request in self.requests:
