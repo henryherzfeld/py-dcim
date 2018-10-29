@@ -89,7 +89,7 @@ class SNMPEngine:
 
     def process_requests(self):
         print('processing request queue')
-        response_data = {}
+        response_data = []
         failures = 0
 
         for request in self.requests:
@@ -101,9 +101,8 @@ class SNMPEngine:
                     print(payload)
 
                     metadata.update({'payload': payload})
-                    label = metadata['label']
 
-                    response_data.update({label: metadata})
+                    response_data.append(metadata)
 
                 else:
                     failures += 1
