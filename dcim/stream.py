@@ -31,7 +31,7 @@ class StreamEngine:
                 packet.append(entry)
 
             if index == packet_size:
-                self.stream.add(packet)
+                self.stream.add({0: packet})
                 packet.clear()
 
         data.clear()
