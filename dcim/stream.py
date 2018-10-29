@@ -5,7 +5,6 @@ from dcim.configuration import get_config
 class StreamEngine:
     stream = 0
 
-
     def __init__(self):
         stream_config = get_config('db')
         host = stream_config['DB_HOST']
@@ -25,13 +24,14 @@ class StreamEngine:
 
         packet = []
 
-        for index, item in enumerate(data):
-            for oid, payload in data:
-                entry = {payload: data}
-                packet.append(entry)
+        for index, response, metadata in enumerate(data):
+            packet.append({response: metadata})
 
             if index == packet_size:
                 self.stream.add({0: packet})
                 packet.clear()
+
+        if packet:
+            self.stream.add({0: packet})
 
         data.clear()
