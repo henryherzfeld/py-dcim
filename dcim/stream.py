@@ -24,7 +24,7 @@ class StreamEngine:
 
         packet = []
 
-        for index, entry in enumerate(data):
+        for index, entry in enumerate(data.items()):
             print(entry)
             packet.append(entry)
 
