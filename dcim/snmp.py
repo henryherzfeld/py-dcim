@@ -101,8 +101,8 @@ class SNMPEngine:
                 else:
                     failures += 1
 
-            if failures:
-                print('{0} snmp attempts not returned from snmp'.format(failures))
+        if failures:
+            print('{0} snmp attempts not returned from snmp'.format(failures))
 
         self.requests.clear()
         return response_data
