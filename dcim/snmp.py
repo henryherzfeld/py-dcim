@@ -78,7 +78,7 @@ class SNMPEngine:
 
                     # appending parent equipment data label to oid metadata array for later organization
                     metadata_dict = oid_obj.get_metadata_dict()
-                    metadata_dict['metadata'].update({'label': equipment.get_label()})
+                    metadata_dict.update({'label': equipment.get_label()})
 
                     self.requests.append({
                         self.loop.create_task(
@@ -97,11 +97,11 @@ class SNMPEngine:
                 response = self.loop.run_until_complete(snmp_request)
 
                 if response:
-                    payload = str(response).split('=', 1)[1]
+                    payload = str(response).split('=', 1)[1].lstrip()
                     print(payload)
 
-                    metadata['metadata'].update({'payload': payload})
-                    label = metadata['metadata']['label']
+                    metadata.update({'payload': payload})
+                    label = metadata['label']
 
                     response_data.update({label: metadata})
 

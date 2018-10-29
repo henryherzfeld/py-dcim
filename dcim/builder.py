@@ -124,10 +124,10 @@ class Oid:
         return self.snmp_object
 
     def get_metadata_dict(self):
-        metadata_array = {'metadata': {
+        metadata_array = {
                             'type': self.get_type(),
-                            'divisor': self.get_divisor()}
-                          }
+                            'divisor': self.get_divisor()
+        }
         return metadata_array
 
     def snmp_object(self):
