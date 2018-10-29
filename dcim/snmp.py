@@ -90,11 +90,19 @@ class SNMPEngine:
     def process_requests(self):
         print('processing request queue')
         response_data = defaultdict(lambda: 0)
+        failures = 0
 
         for request in self.requests:
             for snmp_request, metadata in request.items():
                 response = self.loop.run_until_complete(snmp_request)
-                response_data.update({response: metadata})
+                if response:
+                    response_data.update({response: metadata})
+
+                else:
+                    failures += 1
+
+            if failures:
+                print('{0} snmp attempts not returned from snmp'.format(failures))
 
         self.requests.clear()
         return response_data
