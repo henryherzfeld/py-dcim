@@ -20,16 +20,18 @@ class StreamEngine:
         self.stream = db.Stream('stream2')
 
     def add(self, data):
-        failures = 0
-        for item in data:
-            if item:
-                for oid, payload in data:
-                    self.stream.add({payload: data})
+        stream_config = get_config('db')
+        packet_size = stream_config['DB_PACKET']
 
-            else:
-                failures += 1
+        packet = []
 
-        if failures:
-            print('{0} snmp attempts not sent to stream'.format(failures))
+        for index, item in enumerate(data):
+            for oid, payload in data:
+                entry = {payload: data}
+                packet.append(entry)
+
+            if index == packet_size:
+                self.stream.add(packet)
+                packet.clear()
 
         data.clear()
