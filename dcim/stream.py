@@ -26,12 +26,11 @@ class StreamEngine:
 
         for index, entry in enumerate(data):
             print(entry)
-            for oid, payload in entry.items():
-                packet.append({oid: payload})
+            packet.append(entry)
 
-                if index == packet_size:
-                    self.stream.add({0: packet})
-                    packet.clear()
+            if index == packet_size:
+                self.stream.add({0: packet})
+                packet.clear()
 
         if packet:
             self.stream.add({0: packet})

@@ -95,9 +95,15 @@ class SNMPEngine:
         for request in self.requests:
             for snmp_request, metadata in request.items():
                 response = self.loop.run_until_complete(snmp_request)
+
                 if response:
-                    print(type(response))
-                    response_data.update({response: metadata})
+                    payload = str(response).split('=', 1)[1]
+                    print(payload)
+
+                    metadata['metadata'].update({'payload': payload})
+                    label = metadata['metadata']['label']
+
+                    response_data.update({label: metadata})
 
                 else:
                     failures += 1
