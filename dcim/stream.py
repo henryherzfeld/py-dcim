@@ -25,7 +25,7 @@ class StreamEngine:
         packet = []
 
         for index, entry in enumerate(data.items()):
-            print(type(entry))
+            print(entry)
             packet.append(entry)
 
             if index == packet_size:
