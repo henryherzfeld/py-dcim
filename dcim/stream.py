@@ -9,6 +9,7 @@ class StreamEngine:
         stream_config = get_config('db')
         host = stream_config['DB_HOST']
         password = stream_config['DB_PASS']
+        stream = stream_config['DB_STREAM']
 
         db = Database(
             host=host,
@@ -16,7 +17,7 @@ class StreamEngine:
             password=password,
             db=0
         )
-        self.stream = db.Stream('stream1')
+        self.stream = db.Stream(stream)
 
     def add(self, data):
         stream_config = get_config('db')
