@@ -16,7 +16,7 @@ class StreamEngine:
             password=password,
             db=0
         )
-        self.stream = db.Stream('stream2')
+        self.stream = db.Stream('stream1')
 
     def add(self, data):
         stream_config = get_config('db')
@@ -24,12 +24,14 @@ class StreamEngine:
 
         packet = []
 
-        for index, response, metadata in enumerate(data):
-            packet.append({response: metadata})
+        for index, entry in enumerate(data):
+            print(entry)
+            for oid, payload in entry:
+                packet.append({oid: payload})
 
-            if index == packet_size:
-                self.stream.add({0: packet})
-                packet.clear()
+                if index == packet_size:
+                    self.stream.add({0: packet})
+                    packet.clear()
 
         if packet:
             self.stream.add({0: packet})
