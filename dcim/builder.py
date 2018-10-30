@@ -3,12 +3,15 @@ from pysnmp.hlapi.asyncio import (
     ObjectIdentity
 )
 from dcim.configuration import get_config
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # accepts config target data, returns array of Rack objects
 # on init, ea rack object initializes their containing equipment
 def racks(targets_blob):
-    print('building rack table..')
+    logger.info('building rack table..')
 
     snmp_targets = []
     id = 0
@@ -20,7 +23,7 @@ def racks(targets_blob):
         equipment = snmp_target['equipment']
         row = snmp_target['row']
 
-        print('rack ' + row + str(id) + ' initialized')
+        logger.info('rack ' + row + str(id) + ' initialized')
         snmp_targets.append(Rack(id, equipment, row))
 
     return snmp_targets

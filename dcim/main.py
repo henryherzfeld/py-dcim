@@ -1,10 +1,12 @@
-
-from dcim.time import wait
-from dcim.configuration import get_config
 from dcim.snmp import SNMPEngine
 from dcim.stream import StreamEngine
-from time import time
 import dcim.builder as build
+from dcim.configuration import get_config
+from dcim.time import wait
+from time import time
+import logging
+
+logging.basicConfig(filename='snmp.log', level=logging.DEBUG)
 
 
 def run():
@@ -13,7 +15,6 @@ def run():
     config_chron = get_config('chron')
     targets_blob = get_config('targets')
 
-    print('acquiring target table...')
     snmp_targets = build.racks(targets_blob)
 
     # initializing engines

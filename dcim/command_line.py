@@ -5,10 +5,8 @@ from dcim import main
 
 
 def run():
-    print("starting..")
     main.run()
 
 
 def test():
-    print("running tests..")
     pytest.main()

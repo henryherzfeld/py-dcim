@@ -1,5 +1,8 @@
 from walrus import *
 from dcim.configuration import get_config
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # initializes with a Redis stream connection, accepts packets
@@ -9,7 +12,7 @@ class StreamEngine:
     packet_count = 0
 
     def __init__(self):
-        print('opening stream..')
+        logger.info('opening stream..')
         stream_config = get_config('stream')
         host = stream_config['STREAM_HOST']
         password = stream_config['STREAM_PASS']
@@ -27,7 +30,7 @@ class StreamEngine:
     # accepts a response blob, creates 'packets', and adds to stream
     # as specified in config, clears response blob
     def add(self, response_blob):
-        print('adding data to stream...')
+        logger.info('adding data to stream...')
 
         packet = []
 
@@ -37,12 +40,12 @@ class StreamEngine:
             if index == self.packet_size:
                 self.packet_count += 1
                 self.stream.add({self.packet_count: packet})
-                print('packet_id {0} added to stream'.format(self.packet_count))
+                logger.info('packet_id {0} added to stream'.format(self.packet_count))
                 packet.clear()
 
         if packet:
             self.packet_cout += 1
             self.stream.add({self.packet_count: packet})
-            print('packet_id {0} added to stream'.format(self.packet_count))
+            logger.info('packet_id {0} added to stream'.format(self.packet_count))
 
         response_blob.clear()

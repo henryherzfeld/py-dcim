@@ -10,9 +10,8 @@ from pysnmp.smi import view
 import asyncio
 import logging
 from dcim.configuration import get_config
-from collections import defaultdict
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 # Adaption of PySNMP Engine, performs all SNMP processing asynchronously
@@ -52,11 +51,11 @@ class SNMPEngine:
         error_indication, error_status, error_index, varbinds = response
 
         if error_indication:
-            LOGGER.warning('%s with this asset: %s', error_indication, host)
+            logger.warning('%s with this asset: %s', error_indication, host)
             return
 
         elif error_status:
-            LOGGER.warning(
+            logger.warning(
                 '%s at %s',
                 error_status.prettyPrint(),
             )
@@ -68,7 +67,7 @@ class SNMPEngine:
     # build loop tasks from attached target data
     # with metadata appended
     def enqueue_requests(self):
-        print('enqueueing requests..')
+        logger.info('enqueueing requests..')
 
         for target in self.targets:
             for equipment in target.contains:
@@ -87,7 +86,7 @@ class SNMPEngine:
                     })
 
     def process_requests(self):
-        print('processing request queue..')
+        logger.info('processing request queue..')
         response_data = []
         failures = 0
 
@@ -106,7 +105,7 @@ class SNMPEngine:
                     failures += 1
 
         if failures:
-            print('{0} snmp attempts not returned from snmp'.format(failures))
+            logger.warning('{0} snmp attempts not returned from snmp'.format(failures))
 
         self.requests.clear()
         return response_data
