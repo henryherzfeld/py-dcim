@@ -23,7 +23,7 @@ DCIM_fau is quick to deploy and even quicker to run.
 #### 1. Installation
 Firstly, pull the package from either PyPi or Github:
 
- &nbsp; &nbsp; &nbsp; &nbsp; `$ pip install dcim_fau` &nbsp; &nbsp; &nbsp; &nbsp; _installation via pip package manager is preferred_
+ &nbsp; &nbsp; &nbsp; &nbsp; `$ pip install dcim-fau` &nbsp; &nbsp; &nbsp; &nbsp; _installation via pip package manager is preferred_
 
 #### 2. _conf.yaml_
 The configuration file for DCIM_fau uses markdown to notate specific parameters required to run in a readable format.
