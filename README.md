@@ -23,7 +23,7 @@ DCIM_fau is quick to deploy and even quicker to run.
 #### 1. Installation
 Firstly, pull the package from either PyPi or Github:
 
- &nbsp; &nbsp; &nbsp; &nbsp; `$ pip install dcim_fau` &nbsp; &nbsp; &nbsp; &nbsp; _installation via pip package manager is **always** preferred_
+ &nbsp; &nbsp; &nbsp; &nbsp; `$ pip install dcim_fau` &nbsp; &nbsp; &nbsp; &nbsp; _installation via pip package manager is preferred_
 
 #### 2. _conf.yaml_
 The configuration file for DCIM_fau uses markdown to notate specific parameters required to run in a readable format.
@@ -74,16 +74,15 @@ oids:
 
 DCIM_fau utilizes Python's `console_scripts` entry point logic to simplify deployment and execution.
 
-To initialize, run the following command:
-
-`$ scaffold`
-
-This scaffolds the database, building the necessary structure for the provided equipment OIDs.
-
 ##### Run:
 To start collection, run the following command:
 
-`$ run`
+`$ run &`
+
+##### Test:
+To run a set of initialization tests:
+
+`$ test`
 
 
 The MIT License (MIT)
