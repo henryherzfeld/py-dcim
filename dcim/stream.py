@@ -2,14 +2,19 @@ from walrus import *
 from dcim.configuration import get_config
 
 
+# initializes with a Redis stream connection, accepts packets
 class StreamEngine:
     stream = 0
+    packet_size = 0
+    packet_count = 0
 
     def __init__(self):
-        stream_config = get_config('db')
-        host = stream_config['DB_HOST']
-        password = stream_config['DB_PASS']
-        stream = stream_config['DB_STREAM']
+        print('opening stream..')
+        stream_config = get_config('stream')
+        host = stream_config['STREAM_HOST']
+        password = stream_config['STREAM_PASS']
+        stream = stream_config['STREAM_ID']
+        self.packet_size = stream_config['STREAM_PACKET']
 
         db = Database(
             host=host,
@@ -19,21 +24,25 @@ class StreamEngine:
         )
         self.stream = db.Stream(stream)
 
-    def add(self, data):
-        stream_config = get_config('db')
-        packet_size = stream_config['DB_PACKET']
+    # accepts a response blob, creates 'packets', and adds to stream
+    # as specified in config, clears response blob
+    def add(self, response_blob):
+        print('adding data to stream...')
 
         packet = []
 
-        for index, entry in enumerate(data):
-            print(entry)
+        for index, entry in enumerate(response_blob):
             packet.append(entry)
 
-            if index == packet_size:
-                self.stream.add({0: packet})
+            if index == self.packet_size:
+                self.packet_count += 1
+                self.stream.add({self.packet_count: packet})
+                print('packet_id {0} added to stream'.format(self.packet_count))
                 packet.clear()
 
         if packet:
-            self.stream.add({0: packet})
+            self.packet_cout += 1
+            self.stream.add({self.packet_count: packet})
+            print('packet_id {0} added to stream'.format(self.packet_count))
 
-        data.clear()
+        response_blob.clear()

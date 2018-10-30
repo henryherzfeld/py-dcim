@@ -18,7 +18,6 @@ setup(name='dcim_fau',
       install_requires=[
           'pyyaml',
           'pysnmp',
-          'mysql-connector-python',
           'redis',
           'walrus',
           'pytest',
@@ -28,7 +27,7 @@ setup(name='dcim_fau',
       zip_safe=False,
       entry_points={
           'console_scripts': [
-              'scaffold=dcim.command_line:bootstrap',
+              'test=dcim.command_line:test',
               'run=dcim.command_line:run',
               ]
           }

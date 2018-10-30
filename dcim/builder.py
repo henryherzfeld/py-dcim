@@ -8,18 +8,17 @@ from dcim.configuration import get_config
 # accepts config target data, returns array of Rack objects
 # on init, ea rack object initializes their containing equipment
 def racks(targets_blob):
+    print('building rack table..')
+
     snmp_targets = []
     id = 0
 
-    # getting individual equipment profile, row from configuration file
+    # getting individual equipment profile, row from config
     for snmp_target_label, snmp_target in targets_blob.items():
 
         id += 1
         equipment = snmp_target['equipment']
         row = snmp_target['row']
-
-        if equipment is None:
-            print('Rack ' + id + 'has no equipment in configuration file')
 
         print('rack ' + row + str(id) + ' initialized')
         snmp_targets.append(Rack(id, equipment, row))
@@ -36,7 +35,7 @@ def oids(oid_array):
 
         type = list(oid_entry.keys())[0]
 
-        # handling layered dictionary and lists from config YAML
+        # handling layered dictionary and lists from config
         oid_entry = oid_entry.popitem()[1]
 
         value = oid_entry['value']
@@ -77,7 +76,6 @@ class Rack:
             )
 
 
-# constructor assigns equipment type, ip, oids, rowm rack and (optionally) sensorid
 class Equipment:
     equipment_type = ''
     ip = ''
@@ -99,6 +97,7 @@ class Equipment:
         return label
 
 
+# contains data necessary for SNMP request object
 class Oid:
     value = 0
     divisor = 0

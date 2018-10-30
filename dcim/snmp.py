@@ -41,8 +41,6 @@ class SNMPEngine:
     # process a single SNMP request asynchronously, requires host and snmp_object
     async def send_snmp_request(self, host, target):
 
-        print("attempting SNMP for " + host)
-
         response = await getCmd(
             self.snmpEngine,
             CommunityData(self.community_string, mpModel=1),
@@ -67,10 +65,10 @@ class SNMPEngine:
         else:
             return varbinds[0]
 
-    # retrieves snmp data from each target's equipment, builds and sorts dictionary of lists
-    # where key is ip and value is array of all oids, stores request calls for each ip in event loop
+    # build loop tasks from attached target data
+    # with metadata appended
     def enqueue_requests(self):
-        print('enqueueing requests')
+        print('enqueueing requests..')
 
         for target in self.targets:
             for equipment in target.contains:
@@ -80,6 +78,7 @@ class SNMPEngine:
                     metadata_dict = oid_obj.get_metadata_dict()
                     metadata_dict.update({'label': equipment.get_label()})
 
+                    # appending targets to requests queue
                     self.requests.append({
                         self.loop.create_task(
                             self.send_snmp_request(equipment.ip, oid_obj.get_snmp_object())
@@ -88,7 +87,7 @@ class SNMPEngine:
                     })
 
     def process_requests(self):
-        print('processing request queue')
+        print('processing request queue..')
         response_data = []
         failures = 0
 
@@ -98,7 +97,6 @@ class SNMPEngine:
 
                 if response:
                     payload = str(response).split('=', 1)[1].lstrip()
-                    print(payload)
 
                     metadata.update({'payload': payload})
 

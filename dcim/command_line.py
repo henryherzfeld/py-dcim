@@ -1,9 +1,14 @@
-import json
-import dcim
+import pytest
+from dcim import main
 
 # all command line entry points as specified in setup.py are called here
 
 
-# command for starting snmp processing
 def run():
-    dcim.main()
+    print("starting..")
+    main.run()
+
+
+def test():
+    print("running tests..")
+    pytest.main()
