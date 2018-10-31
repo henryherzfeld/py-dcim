@@ -99,7 +99,7 @@ class Equipment:
 
             # sensor check
             if self.sensor:
-                value = value + '.' + self.sensor + '.0'
+                value = str(value) + '.' + str(self.sensor)
                 print(value)
 
             oid_obj = Oid(value, divisor, type)
