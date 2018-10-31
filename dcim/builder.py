@@ -75,8 +75,8 @@ class Equipment:
         self.ip = ip
         self.row = row
         self.rack = rack
-        self.oid_obj_array = self.build_oids()
         self.sensor = sensor
+        self.oid_obj_array = self.build_oids()
 
     def get_label(self):
         label = str(self.row) + str(self.rack) + str(self.equipment_type)
