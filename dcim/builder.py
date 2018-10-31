@@ -55,13 +55,13 @@ class Rack:
             # sensor check
             try:
                 current_equipment.set_sensor(equipment['sensor'])
+                self.contains.append(
+                    current_equipment
+                )
             except KeyError:
-                print('')
-
-            self.contains.append(
-                current_equipment
-            )
-
+                self.contains.append(
+                    current_equipment
+                )
 
 
 class Equipment:
@@ -100,7 +100,7 @@ class Equipment:
 
             # sensor check
             if self.sensor:
-                value = value + '.' + self.sensor
+                value = value + '.' + self.sensor + '.0.0'
 
             oid_obj = Oid(value, divisor, type)
 
