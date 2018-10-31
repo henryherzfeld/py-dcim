@@ -103,7 +103,7 @@ class SNMPEngine:
                         payload = int(payload) / metadata['divisor']
 
                         metadata.update({'payload': payload})
-                    except TypeError:
+                    except ValueError:
                         logger.warning('failed integer division for payload{0}'.format(payload))
                         failures += 1
 
