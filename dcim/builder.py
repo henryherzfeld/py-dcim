@@ -44,24 +44,22 @@ class Rack:
             ip = equipment['ip']
             equipment_type = equipment['type']
 
+            try:
+                sensor_id = equipment['sensor']
+            except KeyError:
+                sensor_id = 0
+
             current_equipment = Equipment(
                 equipment_type,
                 ip,
                 row,
                 rack_id,
+                sensor_id
             )
 
-            # sensor check
-            try:
-                print(equipment['sensor'])
-                current_equipment.sensor = equipment['sensor']
-                self.contains.append(
-                    current_equipment
-                )
-            except KeyError:
-                self.contains.append(
-                    current_equipment
-                )
+            self.contains.append(
+                current_equipment
+            )
 
 
 class Equipment:
@@ -72,12 +70,13 @@ class Equipment:
     row = 0
     sensor = 0
 
-    def __init__(self, equipment_type, ip, row, rack):
+    def __init__(self, equipment_type, ip, row, rack, sensor):
         self.equipment_type = equipment_type
         self.ip = ip
         self.row = row
         self.rack = rack
         self.oid_obj_array = self.build_oids()
+        self.sensor = sensor
 
     def get_label(self):
         label = str(self.row) + str(self.rack) + str(self.equipment_type)
