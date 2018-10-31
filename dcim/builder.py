@@ -43,7 +43,6 @@ class Rack:
         for equipment in rack_equipment:
             ip = equipment['ip']
             equipment_type = equipment['type']
-            current_equipment = 0
 
             current_equipment = Equipment(
                 equipment_type,
@@ -54,6 +53,7 @@ class Rack:
 
             # sensor check
             try:
+                print(equipment['sensor'])
                 current_equipment.set_sensor(equipment['sensor'])
                 self.contains.append(
                     current_equipment
@@ -100,7 +100,7 @@ class Equipment:
 
             # sensor check
             if self.sensor:
-                value = value + self.sensor + ".0.0"
+                value = value + self.sensor + '.0'
                 print(value)
 
             oid_obj = Oid(value, divisor, type)
