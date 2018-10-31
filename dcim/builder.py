@@ -43,21 +43,25 @@ class Rack:
         for equipment in rack_equipment:
             ip = equipment['ip']
             equipment_type = equipment['type']
+            current_equipment = 0
+
+            current_equipment = Equipment(
+                equipment_type,
+                ip,
+                row,
+                rack_id,
+            )
 
             # sensor check
-            sensor_id = 0
-            if equipment['sensor']:
-                sensor_id = equipment['sensor']
+            try:
+                current_equipment.set_sensor(equipment['sensor'])
+            except KeyError:
+                print('expected')
 
             self.contains.append(
-                Equipment(
-                    equipment_type,
-                    ip,
-                    row,
-                    rack_id,
-                    sensor_id
-                )
+                current_equipment
             )
+
 
 
 class Equipment:
@@ -68,15 +72,12 @@ class Equipment:
     row = 0
     sensor = 0
 
-    def __init__(self, equipment_type, ip, row, rack, sensor):
+    def __init__(self, equipment_type, ip, row, rack):
         self.equipment_type = equipment_type
         self.ip = ip
         self.row = row
         self.rack = rack
         self.oid_obj_array = self.build_oids()
-
-        if sensor:
-            self.sensor = sensor
 
     def get_label(self):
         label = str(self.row) + str(self.rack) + str(self.equipment_type)
@@ -106,6 +107,9 @@ class Equipment:
             oid_obj_array.append(oid_obj)
 
         return oid_obj_array
+
+    def set_sensor(self, sensor_id):
+        self.sensor = sensor_id
 
 
 # contains data necessary for SNMP request object
