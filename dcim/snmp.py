@@ -104,7 +104,7 @@ class SNMPEngine:
 
                         metadata.update({'payload': payload})
                     except ValueError:
-                        logger.warning('failed integer division for payload{0}'.format(payload))
+                        logger.warning('failed integer division for payload from {0}'.format(metadata['label']))
                         failures += 1
 
                 else:
