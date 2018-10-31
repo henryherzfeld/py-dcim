@@ -100,12 +100,15 @@ class SNMPEngine:
 
                     # did our formatted payload response create an integer? if so, success
                     try:
-                        payload = int(payload) / metadata['divisor']
+                        if payload:
+                            payload = int(payload) / metadata['divisor']
 
-                        metadata.update({'payload': payload})
+                            metadata.update({'payload': payload})
                     except ValueError:
                         logger.warning('failed integer division for payload from {0}'.format(metadata['label']))
                         failures += 1
+
+                    response_data.append(metadata)
 
                 else:
                     failures += 1
