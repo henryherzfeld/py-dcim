@@ -94,8 +94,9 @@ class SNMPEngine:
             for snmp_request, metadata in request.items():
                 response = self.loop.run_until_complete(snmp_request)
 
-                if response:
-                    payload = str(response).split('=', 1)[1].lstrip()
+                payload = str(response).split('=', 1)[1].lstrip()
+
+                if type(payload) == int:
                     payload = int(payload) / metadata['divisor']
 
                     metadata.update({'payload': payload})
