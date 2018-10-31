@@ -94,14 +94,18 @@ class SNMPEngine:
             for snmp_request, metadata in request.items():
                 response = self.loop.run_until_complete(snmp_request)
 
-                payload = str(response).split('=', 1)[1].lstrip()
+                if response:
 
-                if type(payload) == int:
-                    payload = int(payload) / metadata['divisor']
+                    payload = str(response).split('=', 1)[1].lstrip()
 
-                    metadata.update({'payload': payload})
+                    # did our formatted payload response create an integer? if so, success
+                    try:
+                        payload = int(payload) / metadata['divisor']
 
-                    response_data.append(metadata)
+                        metadata.update({'payload': payload})
+                    except TypeError:
+                        logger.warning('failed integer division for payload{0}'.format(payload))
+                        failures += 1
 
                 else:
                     failures += 1
