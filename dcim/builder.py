@@ -10,16 +10,17 @@ logger = logging.getLogger(__name__)
 
 # accepts config target data, returns array of Rack objects
 # on init, ea rack object initializes their containing equipment
-def racks(targets_blob):
+def racks():
     logger.info('building rack table..')
 
+    targets_blob = get_config('targets')
     snmp_targets = []
-    id = 0
+    rack_id = 0
 
     # getting individual equipment profile, row from config
     for snmp_target_label, snmp_target in targets_blob.items():
 
-        id += 1
+        rack_id += 1
         equipment = snmp_target['equipment']
         row = snmp_target['row']
 
@@ -29,52 +30,32 @@ def racks(targets_blob):
     return snmp_targets
 
 
-# accepts config oid data relative to equipment type.
-# returns array of Oid objects containing value and divisor
-def oids(oid_array):
-    oid_obj_array = []
-
-    for oid_entry in oid_array:
-
-        type = list(oid_entry.keys())[0]
-
-        # handling layered dictionary and lists from config
-        oid_entry = oid_entry.popitem()[1]
-
-        value = oid_entry['value']
-        divisor = oid_entry['divisor']
-
-        oid_obj = Oid(value, divisor, type)
-
-        oid_obj_array.append(oid_obj)
-
-    return oid_obj_array
-
-
 # constructor accepts equipment array, processes each one to bind snmp data
 class Rack:
     contains = []
-    id = 0
+    rack_id = 0
     row = 0
 
-    def __init__(self, id, rack_equipment, row):
-        self.id = id
+    def __init__(self, rack_id, rack_equipment, row):
+        self.rack_id = rack_id
         self.row = row
 
         for equipment in rack_equipment:
             ip = equipment['ip']
             equipment_type = equipment['type']
 
-            oid_array = get_config('oids')[equipment_type]
-            oid_obj_array = oids(oid_array)
+            # sensor check
+            sensor_id = 0
+            if equipment['sensor']:
+                sensor_id = equipment['sensor']
 
             self.contains.append(
                 Equipment(
                     equipment_type,
                     ip,
                     row,
-                    id,
-                    oid_obj_array
+                    rack_id,
+                    sensor_id
                 )
             )
 
@@ -82,22 +63,49 @@ class Rack:
 class Equipment:
     equipment_type = ''
     ip = ''
-    sensor_id = ''
-    oid_array = []
+    oid_object_array = []
     rack = 0
     row = 0
+    sensor = 0
 
-    def __init__(self, equipment_type, ip, row, rack, oid_obj_array):
+    def __init__(self, equipment_type, ip, row, rack, sensor):
         self.equipment_type = equipment_type
         self.ip = ip
-        self.oid_array = oid_obj_array
-        self.rack = rack
         self.row = row
-        self.sensor_id = ''
+        self.rack = rack
+        self.oid_obj_array = self.build_oids()
+
+        if sensor:
+            self.sensor = sensor
 
     def get_label(self):
         label = str(self.row) + str(self.rack) + str(self.equipment_type)
         return label
+
+    # accepts config oid data relative to equipment type.
+    # returns array of Oid objects containing value and divisor
+    def build_oids(self):
+        oid_array = get_config('oids')[self.equipment_type]
+        oid_obj_array = []
+
+        for oid_entry in oid_array:
+            type = list(oid_entry.keys())[0]
+
+            # handling layered dictionary and lists from config
+            oid_entry = oid_entry.popitem()[1]
+
+            value = oid_entry['value']
+            divisor = oid_entry['divisor']
+
+            # sensor check
+            if self.sensor:
+                value = value + self.sensor
+
+            oid_obj = Oid(value, divisor, type)
+
+            oid_obj_array.append(oid_obj)
+
+        return oid_obj_array
 
 
 # contains data necessary for SNMP request object
@@ -114,6 +122,8 @@ class Oid:
         self.snmp_object = self.snmp_object()
 
     def get_oid(self):
+
+
         return self.value
 
     def get_divisor(self):
@@ -121,9 +131,6 @@ class Oid:
 
     def get_type(self):
         return self.type
-
-    def get_snmp_object(self):
-        return self.snmp_object
 
     def get_metadata_dict(self):
         metadata_array = {
@@ -133,4 +140,7 @@ class Oid:
         return metadata_array
 
     def snmp_object(self):
-        return ObjectType(ObjectIdentity(self.get_oid()))
+        return ObjectType(
+            ObjectIdentity(
+                self.value
+            ))

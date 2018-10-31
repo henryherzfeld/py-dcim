@@ -71,7 +71,7 @@ class SNMPEngine:
 
         for target in self.targets:
             for equipment in target.contains:
-                for oid_obj in equipment.oid_array:
+                for oid_obj in equipment.oid_obj_array:
 
                     # appending parent equipment data label to oid metadata array for later organization
                     metadata_dict = oid_obj.get_metadata_dict()

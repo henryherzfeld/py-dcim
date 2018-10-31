@@ -44,7 +44,7 @@ class StreamEngine:
                 packet.clear()
 
         if packet:
-            self.packet_cout += 1
+            self.packet_count += 1
             self.stream.add({self.packet_count: packet})
             logger.info('packet_id {0} added to stream'.format(self.packet_count))
 

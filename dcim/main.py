@@ -1,7 +1,6 @@
 from dcim.snmp import SNMPEngine
 from dcim.stream import StreamEngine
 import dcim.builder as build
-from dcim.configuration import get_config
 from dcim.time import wait
 from time import time
 import logging
@@ -10,12 +9,7 @@ logging.basicConfig(filename='snmp.log', level=logging.DEBUG)
 
 
 def run():
-
-    # collecting data necessary for process loop
-    config_chron = get_config('chron')
-    targets_blob = get_config('targets')
-
-    snmp_targets = build.racks(targets_blob)
+    snmp_targets = build.racks()
 
     # initializing engines
     snmp_engine = SNMPEngine(snmp_targets)
@@ -30,4 +24,4 @@ def run():
         stream_engine.add(results)
         results.clear()
 
-        wait(interval_start, config_chron['COLL_INTERVAL'])
+        wait(interval_start)
