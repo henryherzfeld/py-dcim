@@ -54,7 +54,7 @@ class Rack:
             # sensor check
             try:
                 print(equipment['sensor'])
-                current_equipment.set_sensor(equipment['sensor'])
+                current_equipment.sensor = equipment['sensor']
                 self.contains.append(
                     current_equipment
                 )
@@ -100,7 +100,7 @@ class Equipment:
 
             # sensor check
             if self.sensor:
-                value = value + self.sensor + '.0'
+                value = '.'.join([value, self.sensor, '0'])
                 print(value)
 
             oid_obj = Oid(value, divisor, type)
@@ -108,9 +108,6 @@ class Equipment:
             oid_obj_array.append(oid_obj)
 
         return oid_obj_array
-
-    def set_sensor(self, sensor_id):
-        self.sensor = sensor_id
 
 
 # contains data necessary for SNMP request object
