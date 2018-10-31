@@ -56,7 +56,7 @@ class Rack:
             try:
                 current_equipment.set_sensor(equipment['sensor'])
             except KeyError:
-                print('expected')
+                print('')
 
             self.contains.append(
                 current_equipment
@@ -115,20 +115,14 @@ class Equipment:
 # contains data necessary for SNMP request object
 class Oid:
     value = 0
-    divisor = 0
+    divisor = 1
     type = ''
-    snmp_request = 0
 
     def __init__(self, value, divisor, type):
         self.value = value
         self.divisor = divisor
         self.type = type
         self.snmp_object = self.snmp_object()
-
-    def get_oid(self):
-
-
-        return self.value
 
     def get_divisor(self):
         return self.divisor

@@ -80,7 +80,7 @@ class SNMPEngine:
                     # appending targets to requests queue
                     self.requests.append({
                         self.loop.create_task(
-                            self.send_snmp_request(equipment.ip, oid_obj.get_snmp_object())
+                            self.send_snmp_request(equipment.ip, oid_obj.snmp_object)
                         ):
                             metadata_dict
                     })
