@@ -96,6 +96,7 @@ class SNMPEngine:
 
                 if response:
                     payload = str(response).split('=', 1)[1].lstrip()
+                    payload = int(payload) / metadata['divisor']
 
                     metadata.update({'payload': payload})
 

@@ -24,8 +24,8 @@ def racks():
         equipment = snmp_target['equipment']
         row = snmp_target['row']
 
-        logger.info('rack ' + row + str(id) + ' initialized')
-        snmp_targets.append(Rack(id, equipment, row))
+        logger.info('rack ' + row + str(rack_id) + ' initialized')
+        snmp_targets.append(Rack(rack_id, equipment, row))
 
     return snmp_targets
 
@@ -39,7 +39,10 @@ class Rack:
     def __init__(self, rack_id, rack_equipment, row):
         self.rack_id = rack_id
         self.row = row
+        self.contains = []
+        self.build_equipment(rack_equipment)
 
+    def build_equipment(self, rack_equipment):
         for equipment in rack_equipment:
             ip = equipment['ip']
             equipment_type = equipment['type']
@@ -49,34 +52,33 @@ class Rack:
             except KeyError:
                 sensor_id = 0
 
-            current_equipment = Equipment(
-                equipment_type,
-                ip,
-                row,
-                rack_id,
-                sensor_id
-            )
-
             self.contains.append(
-                current_equipment
+                Equipment(
+                    equipment_type,
+                    ip,
+                    self.row,
+                    self.rack_id,
+                    sensor_id
+                )
             )
 
 
 class Equipment:
     equipment_type = ''
+    oid_obj_array = []
     ip = ''
-    oid_object_array = []
     rack = 0
     row = 0
     sensor = 0
 
     def __init__(self, equipment_type, ip, row, rack, sensor):
         self.equipment_type = equipment_type
+        self.oid_obj_array = []
         self.ip = ip
         self.row = row
         self.rack = rack
         self.sensor = sensor
-        self.oid_obj_array = self.build_oids()
+        self.build_oids()
 
     def get_label(self):
         label = str(self.row) + str(self.rack) + str(self.equipment_type)
@@ -86,7 +88,6 @@ class Equipment:
     # returns array of Oid objects containing value and divisor
     def build_oids(self):
         oid_array = get_config('oids')[self.equipment_type]
-        oid_obj_array = []
 
         for oid_entry in oid_array:
             type = list(oid_entry.keys())[0]
@@ -100,13 +101,10 @@ class Equipment:
             # sensor check
             if self.sensor:
                 value = str(value) + '.' + str(self.sensor)
-                print(value)
 
             oid_obj = Oid(value, divisor, type)
 
-            oid_obj_array.append(oid_obj)
-
-        return oid_obj_array
+            self.oid_obj_array.append(oid_obj)
 
 
 # contains data necessary for SNMP request object
