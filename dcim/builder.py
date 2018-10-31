@@ -100,7 +100,7 @@ class Equipment:
 
             # sensor check
             if self.sensor:
-                value = value + self.sensor
+                value = value + '.' + self.sensor
 
             oid_obj = Oid(value, divisor, type)
 
