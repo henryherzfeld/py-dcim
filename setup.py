@@ -7,7 +7,7 @@ this_dir = os.path.abspath(os.path.dirname(__file__))
 README = io.open(os.path.join(this_dir, 'README.md'), encoding='utf8').read()
 
 setup(name='dcim_fau',
-      version='1.1a',
+      version='1.2',
       long_description=README,
       long_description_content_type='text/markdown',
       author='Henry Herzfeld',

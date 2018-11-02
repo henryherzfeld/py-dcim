@@ -5,9 +5,8 @@ DCIM_fau
 
 ### Features
 
-- Autonomous data collection via SNMP 
-- Supports Python 2.7 and up
-- Lightweight, no dependencies (non-standard, 2.7+)
+- Asynchronous data collection via PySNMP 
+- Redis 5.0 streams
 - Available on PyPi
 
 About
@@ -24,26 +23,48 @@ DCIM_fau is quick to deploy and even quicker to run.
 #### 1. Installation
 Firstly, pull the package from either PyPi or Github:
 
- &nbsp; &nbsp; &nbsp; &nbsp; `$ pip install dcim_fau` &nbsp; &nbsp; &nbsp; &nbsp; _installation via pip package manager is **always** preferred_
+ &nbsp; &nbsp; &nbsp; &nbsp; `$ pip install dcim-fau` &nbsp; &nbsp; &nbsp; &nbsp; _installation via pip package manager is preferred_
 
 #### 2. _conf.yaml_
 The configuration file for DCIM_fau uses markdown to notate specific parameters required to run in a readable format.
  
  ##### &nbsp; &nbsp; _conf.yaml_ example
 ```YAML    
-  snmp:
-    - COMM_STRING: 'mySNMPsecret'
+snmp:
+  COMM_STRING: 'myCommunityString'
+  TIMEOUT: 20
 
-  chron:
-   # collection interval (seconds)
-   - COLL_INTERVAL: 120
+stream:
+  STREAM_HOST: '127.0.0.1'
+  STREAM_ID: 'localstream'
+  STREAM_PASS: 'password'
+  STREAM_PACKET: '100'
 
-# MYSQL connection info
-  db:
-    - DB_HOST: 'localhost'
-    - DB_USER: 'root'
-    - DB_PASSWORD: 'admin'
-    - DB_NAME: 'deebee'
+chron:
+  COLL_INTERVAL: 180
+
+targets:
+  1:
+    rack:
+    row: A
+    equipment:
+    - type: my_equipment
+      ip: 10.0.0.1
+...
+...
+
+oids:
+  my_equipment:
+  - my_data_1:
+      value: '1.3.6.1...'
+      divisor: 10
+  - my_data_2:
+      value: '1.3.6.1...'
+      divisor: 10
+  - my_data_3:
+      value: '1.3.6.1...'
+      divisor: 10
+...
 ```
         
  &nbsp; &nbsp; You **must** include your _conf.yaml_ in your DCIM_fau root directory, with all parameters validated.
@@ -53,16 +74,18 @@ The configuration file for DCIM_fau uses markdown to notate specific parameters 
 
 DCIM_fau utilizes Python's `console_scripts` entry point logic to simplify deployment and execution.
 
-To initialize, run the following command:
-
-`$ scaffold`
-
-This scaffolds the database, building the necessary structure for the provided equipment OIDs.
-
 ##### Run:
 To start collection, run the following command:
 
-`$ run`
+`$ run &`
+
+##### Test:
+To run a set of initialization tests:
+
+`$ test`
+
+##### Output:
+All output is provided in snmp.log
 
 
 The MIT License (MIT)
