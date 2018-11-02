@@ -7,7 +7,7 @@ this_dir = os.path.abspath(os.path.dirname(__file__))
 README = io.open(os.path.join(this_dir, 'README.md'), encoding='utf8').read()
 
 setup(name='dcim_fau',
-      version='0.1',
+      version='1.2',
       long_description=README,
       long_description_content_type='text/markdown',
       author='Henry Herzfeld',
@@ -15,12 +15,19 @@ setup(name='dcim_fau',
       keywords=['dcim', 'fau'],
       license='MIT',
       packages=find_packages(),
+      install_requires=[
+          'pyyaml',
+          'pysnmp',
+          'redis',
+          'walrus',
+          'pytest',
+      ],
       python_requires=">=3.4",
       include_package_data=True,
       zip_safe=False,
       entry_points={
           'console_scripts': [
-              'scaffold=dcim.command_line:bootstrap',
+              'test=dcim.command_line:test',
               'run=dcim.command_line:run',
               ]
           }
