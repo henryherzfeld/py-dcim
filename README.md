@@ -1,4 +1,4 @@
-DCIM_fau 
+py-dcim 
 ==========
 
 ![](https://img.shields.io/badge/build-alpha-blue.svg)
