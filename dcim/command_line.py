@@ -1,4 +1,3 @@
-
 import pytest
 from dcim import main
 
