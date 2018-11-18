@@ -4,7 +4,8 @@ from pysnmp.hlapi.asyncio import (
     UdpTransportTarget,
     SnmpEngine,
     ContextData,
-
+    ObjectType,
+    ObjectIdentity
 )
 from pysnmp.smi import view
 import asyncio
@@ -118,3 +119,12 @@ class SNMPEngine:
 
         self.requests.clear()
         return response_data
+
+    def test(self, oid, ip):
+        request = self.loop.create_task(
+                  self.send_snmp_request(ip, ObjectType(ObjectIdentity(oid)))
+            )
+
+        response = self.loop.run_until_complete(request)
+
+        return response

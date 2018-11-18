@@ -25,3 +25,11 @@ def run():
         results.clear()
 
         wait(interval_start)
+
+
+def test(ip, oid):
+    snmp_engine = SNMPEngine(0)
+
+    result = snmp_engine.test(ip, oid)
+
+    print(result)
